@@ -11,8 +11,8 @@ CameraManager::CameraManager() {
         return;
     }
 
-    m_capture->set(cv::CAP_PROP_FRAME_WIDTH, 1920);
-    m_capture->set(cv::CAP_PROP_FRAME_HEIGHT, 1080);
+    m_capture->set(cv::CAP_PROP_FRAME_WIDTH, 1280);
+    m_capture->set(cv::CAP_PROP_FRAME_HEIGHT, 720);
 
     std::cout << "Camera initialized successfully" << std::endl;
 }
