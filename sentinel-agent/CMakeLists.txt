@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.31)
+cmake_minimum_required(VERSION 3.20)
 project(sentinel-agent)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -12,6 +12,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
 include_directories(include)
 
 file(GLOB_RECURSE SOURCES "src/*.cpp")
+message(STATUS "Sources: ${SOURCES}")
 add_executable(sentinel-agent ${SOURCES})
 
 target_link_libraries(sentinel-agent PRIVATE ${OpenCV_LIBS})

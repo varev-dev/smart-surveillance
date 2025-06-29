@@ -8,7 +8,7 @@ RecordingManager::RecordingManager() {}
 RecordingManager::~RecordingManager() {}
 
 void RecordingManager::startRecording(const std::string& filename) {
-    m_writer.open(filename, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), 24.0, cv::Size(1280, 720));
+    m_writer.open(filename, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), 30.0, cv::Size(1280, 720));
     m_isRecording = true;
     m_stableFrameCounter = 0;
 }
@@ -38,7 +38,7 @@ void RecordingManager::onMotionDetected() {
 void RecordingManager::onNoMotion() {
     ++m_stableFrameCounter;
 
-    if (m_stableFrameCounter >= m_stableFramesThreshold) {
+    /*if (m_stableFrameCounter >= m_stableFramesThreshold) {
         stopRecording();
-    }
+    }*/
 }

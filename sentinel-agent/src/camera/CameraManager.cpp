@@ -4,7 +4,12 @@
 #include "camera/CameraManager.hpp"
 
 CameraManager::CameraManager() {
-    m_capture = std::make_unique<cv::VideoCapture>(0);
+    std::string pipeline = "libcamerasrc ! "
+                          "video/x-raw,width=1280,height=720,format=RGB,framerate=30/1 ! "
+                          "queue max-size-buffers=1 leaky=downstream ! "
+                          "videoconvert ! "
+                          "appsink sync=false drop=true max-buffers=1 emit-signals=true";
+    m_capture = std::make_unique<cv::VideoCapture>(pipeline, cv::CAP_GSTREAMER);
 
     if (!m_capture->isOpened()) {
         std::cerr << "Unable to open camera" << std::endl;
@@ -35,9 +40,8 @@ cv::Mat CameraManager::captureFrame() const {
         return frame;
     }
 
-    *m_capture >> frame;
-
-    if (frame.empty()) {
+    bool ret = m_capture->read(frame);
+    if (!ret || frame.empty()) {
         std::cerr << "Unable to capture frame" << std::endl;
     }
 

@@ -21,7 +21,7 @@ int main() {
     cv::Mat baseline = camera.captureFrame();
 
     auto startTime = std::chrono::steady_clock::now();
-    auto endTime = startTime + std::chrono::seconds(5);
+    auto endTime = startTime + std::chrono::milliseconds(5050);
 
     bool init = true;
 
