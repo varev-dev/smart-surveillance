@@ -38,7 +38,7 @@ void RecordingManager::onMotionDetected() {
 void RecordingManager::onNoMotion() {
     ++m_stableFrameCounter;
 
-    /*if (m_stableFrameCounter >= m_stableFramesThreshold) {
+    if (m_stableFrameCounter >= m_stableFramesThreshold) {
         stopRecording();
-    }*/
+    }
 }

@@ -3,6 +3,7 @@
 
 #include "camera/CameraManager.hpp"
 #include "recording/RecordingManager.hpp"
+#include "detection/MotionDetector.hpp"
 
 std::string generateTimestamp() {
     const auto now = std::chrono::system_clock::now();
@@ -17,20 +18,20 @@ std::string generateTimestamp() {
 int main() {
     CameraManager camera{};
     RecordingManager recorder{};
-
-    cv::Mat baseline = camera.captureFrame();
+    MotionDetector detector{};
 
     auto startTime = std::chrono::steady_clock::now();
-    auto endTime = startTime + std::chrono::milliseconds(5050);
+    auto endTime = startTime + std::chrono::milliseconds(60050);
 
-    bool init = true;
+    std::vector<cv::Rect> boxes;
 
     const std::chrono::milliseconds frameDuration(33);
+    const std::chrono::milliseconds waitDuration(500);
     while (true) {
         auto frameStart = std::chrono::steady_clock::now();
         cv::Mat frame = camera.captureFrame();
 
-        bool motionDetected = init;
+        bool motionDetected = detector.detect(frame, boxes);
 
         if (motionDetected) {
             if (!recorder.isRecording()) {
@@ -38,7 +39,6 @@ int main() {
             }
             recorder.writeFrame(frame);
             recorder.onMotionDetected();
-            init = false;
         } else {
             if (recorder.isRecording()) {
                 recorder.writeFrame(frame);
@@ -46,17 +46,17 @@ int main() {
             }
         }
 
-        if (endTime <= std::chrono::steady_clock::now()) {
-            recorder.stopRecording();
-            break;
-        }
-
         auto frameEnd = std::chrono::steady_clock::now();
         auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(frameEnd - frameStart);
         std::cout << "Elapsed: " << elapsed.count() << "ms" << std::endl;
 
-        if (elapsed < frameDuration) {
+        if (recorder.isRecording()) {
             std::this_thread::sleep_for(frameDuration - elapsed);
+        } else {
+            if (endTime <= std::chrono::steady_clock::now()) {
+                break;
+            }
+            std::this_thread::sleep_for(waitDuration - elapsed);
         }
     }
 
