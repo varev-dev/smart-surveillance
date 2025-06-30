@@ -9,7 +9,7 @@
 
 class CameraManager {
 public:
-    CameraManager();
+    explicit CameraManager(const cv::Size& resolution = cv::Size(1280, 720), const int8_t& framerate = 24);
     ~CameraManager();
 
     bool isOpened() const;
