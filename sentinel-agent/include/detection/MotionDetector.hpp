@@ -8,8 +8,9 @@
 
 class MotionDetector {
 public:
-    MotionDetector(int thresh = 30, double minArea = 200.0);
+    explicit MotionDetector(int thresh = 30, double minArea = 200.0);
     bool detect(const cv::Mat &frame, std::vector<cv::Rect>& motionRects);
+    bool reset(const cv::Mat &frame);
 
 private:
     cv::Mat m_baseline, m_current, m_diff;

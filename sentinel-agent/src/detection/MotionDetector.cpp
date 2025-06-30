@@ -5,9 +5,8 @@
 
 #include <opencv2/imgproc.hpp>
 
-MotionDetector::MotionDetector(int thresh, double minArea)
-    : m_threshold(thresh), m_minContourArea(minArea), m_isInitialized(false){
-}
+MotionDetector::MotionDetector(const int thresh, const double minArea)
+    : m_threshold(thresh), m_minContourArea(minArea), m_isInitialized(false) {}
 
 bool MotionDetector::detect(const cv::Mat &frame, std::vector<cv::Rect>& motionRects) {
     motionRects.clear();
@@ -16,8 +15,7 @@ bool MotionDetector::detect(const cv::Mat &frame, std::vector<cv::Rect>& motionR
     cv::GaussianBlur(m_current, m_current, cv::Size(21, 21), 0);
 
     if (!m_isInitialized) {
-        m_baseline = m_current.clone();
-        m_isInitialized = true;
+        reset(m_current);
         return false;
     }
 
@@ -33,15 +31,24 @@ bool MotionDetector::detect(const cv::Mat &frame, std::vector<cv::Rect>& motionR
 
     bool motionDetected = false;
     for (const auto& contour : contours) {
-        double area = cv::contourArea(contour);
+        const double area = cv::contourArea(contour);
 
         if (area > m_minContourArea) {
             motionRects.push_back(cv::boundingRect(contour));
             motionDetected = true;
         }
     }
-
-    m_baseline = m_current.clone();
-
+    
     return motionDetected;
+}
+
+bool MotionDetector::reset(const cv::Mat &frame) {
+    if (frame.empty()) {
+        m_isInitialized = false;
+        return false;
+    }
+
+    m_baseline = frame.clone();
+    m_isInitialized = true;
+    return true;
 }
