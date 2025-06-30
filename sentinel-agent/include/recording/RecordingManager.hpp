@@ -11,7 +11,7 @@ public:
     RecordingManager();
     ~RecordingManager();
 
-    void startRecording(const std::string& filename);
+    void startRecording(const std::string& filename, const cv::Size& size = cv::Size(1280, 720), const double& framerate = 24.0);
     void stopRecording();
 
     bool isRecording() const;
@@ -25,7 +25,7 @@ private:
     std::atomic<bool> m_isRecording{false};
     std::atomic<uint32_t> m_stableFrameCounter{0};
 
-    const uint32_t m_stableFramesThreshold = 30;
+    const uint32_t m_stableFramesThreshold = 48;
 };
 
 #endif //RECORDINGMANAGER_HPP
