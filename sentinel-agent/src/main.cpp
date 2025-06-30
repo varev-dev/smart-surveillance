@@ -1,5 +1,6 @@
 #include <iostream>
 #include <thread>
+#include <spdlog/spdlog.h>
 
 #include "camera/CameraManager.hpp"
 #include "recording/RecordingManager.hpp"
@@ -16,16 +17,24 @@ std::string generateTimestamp() {
 }
 
 int main() {
+#ifdef DEBUG
+    spdlog::set_level(spdlog::level::debug);
+#else
+    spdlog::set_level(spdlog::level::info);
+#endif
+
+    spdlog::debug("Hello World!");
+    spdlog::info("Program started");
     CameraManager camera{};
     RecordingManager recorder{};
     MotionDetector detector{};
 
     auto startTime = std::chrono::steady_clock::now();
-    auto endTime = startTime + std::chrono::milliseconds(60050);
+    auto endTime = startTime + std::chrono::milliseconds(10050);
 
     std::vector<cv::Rect> boxes;
 
-    const std::chrono::milliseconds frameDuration(33);
+    const std::chrono::milliseconds frameDuration(42);
     const std::chrono::milliseconds waitDuration(500);
     while (true) {
         auto frameStart = std::chrono::steady_clock::now();
@@ -48,7 +57,7 @@ int main() {
 
         auto frameEnd = std::chrono::steady_clock::now();
         auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(frameEnd - frameStart);
-        std::cout << "Elapsed: " << elapsed.count() << "ms" << std::endl;
+        spdlog::debug("Elapsed time (frame capture + motion detection): {}ms", elapsed.count());
 
         if (recorder.isRecording()) {
             std::this_thread::sleep_for(frameDuration - elapsed);
