@@ -10,6 +10,7 @@ endif()
 
 find_package(OpenCV REQUIRED)
 find_package(spdlog REQUIRED)
+find_package(GTest REQUIRED)
 
 set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -Wall -Wextra -pedantic")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
@@ -22,3 +23,15 @@ add_executable(sentinel-agent ${SOURCES})
 
 target_include_directories(sentinel-agent PRIVATE ${OpenCV_INCLUDE_DIRS})
 target_link_libraries(sentinel-agent PRIVATE ${OpenCV_LIBS} spdlog::spdlog)
+
+file(GLOB_RECURSE TEST_SOURCES "tests/*.cpp")
+message(STATUS "Test sources: ${TEST_SOURCES}")
+
+add_executable(tests ${TEST_SOURCES})
+
+target_include_directories(tests PRIVATE ${OpenCV_INCLUDE_DIRS} ${GTEST_INCLUDE_DIRS})
+target_link_libraries(tests PRIVATE ${OpenCV_LIBS} spdlog::spdlog GTest::gtest_main)
+
+enable_testing()
+include(GoogleTest)
+gtest_discover_tests(tests)
