@@ -27,7 +27,8 @@ target_link_libraries(sentinel-agent PRIVATE ${OpenCV_LIBS} spdlog::spdlog)
 file(GLOB_RECURSE TEST_SOURCES "tests/*.cpp")
 message(STATUS "Test sources: ${TEST_SOURCES}")
 
-add_executable(tests ${TEST_SOURCES})
+list(FILTER SOURCES EXCLUDE REGEX ".*/main\\.cpp$")
+add_executable(tests ${SOURCES} ${TEST_SOURCES})
 
 target_include_directories(tests PRIVATE ${OpenCV_INCLUDE_DIRS} ${GTEST_INCLUDE_DIRS})
 target_link_libraries(tests PRIVATE ${OpenCV_LIBS} spdlog::spdlog GTest::gtest_main)
